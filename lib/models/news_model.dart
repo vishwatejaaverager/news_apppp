@@ -1,15 +1,17 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 class News {
   String? title;
-  String? name;
+  Map<String, dynamic>? source;
   String? urlToImage;
   String? content;
   String? description;
   News({
     this.title,
-    this.name,
+    this.source,
     this.urlToImage,
     this.content,
     this.description,
@@ -17,14 +19,14 @@ class News {
 
   News copyWith({
     String? title,
-    String? name,
+    Map<String, dynamic>? source,
     String? urlToImage,
     String? content,
     String? description,
   }) {
     return News(
       title: title ?? this.title,
-      name: name ?? this.name,
+      source: source ?? this.source,
       urlToImage: urlToImage ?? this.urlToImage,
       content: content ?? this.content,
       description: description ?? this.description,
@@ -34,7 +36,7 @@ class News {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'title': title,
-      'name': name,
+      'source': source,
       'urlToImage': urlToImage,
       'content': content,
       'description': description,
@@ -44,7 +46,7 @@ class News {
   factory News.fromMap(Map<String, dynamic> map) {
     return News(
       title: map['title'] != null ? map['title'] as String : null,
-      name: map['name'] != null ? map['name'] as String : null,
+      source: map['source'] != null ? Map<String, dynamic>.from((map['source'] as Map<String, dynamic>)) : null,
       urlToImage: map['urlToImage'] != null ? map['urlToImage'] as String : null,
       content: map['content'] != null ? map['content'] as String : null,
       description: map['description'] != null ? map['description'] as String : null,
@@ -57,7 +59,7 @@ class News {
 
   @override
   String toString() {
-    return 'News(title: $title, name: $name, urlToImage: $urlToImage, content: $content, description: $description)';
+    return 'News(title: $title, source: $source, urlToImage: $urlToImage, content: $content, description: $description)';
   }
 
   @override
@@ -66,7 +68,7 @@ class News {
   
     return 
       other.title == title &&
-      other.name == name &&
+      mapEquals(other.source, source) &&
       other.urlToImage == urlToImage &&
       other.content == content &&
       other.description == description;
@@ -75,7 +77,7 @@ class News {
   @override
   int get hashCode {
     return title.hashCode ^
-      name.hashCode ^
+      source.hashCode ^
       urlToImage.hashCode ^
       content.hashCode ^
       description.hashCode;
