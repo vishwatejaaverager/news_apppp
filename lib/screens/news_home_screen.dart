@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:news_apppp/models/news_model.dart';
+import 'package:news_apppp/database/data_model.dart';
 import 'package:news_apppp/provider/news_provider.dart';
 import 'package:news_apppp/screens/news_details_screen.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +16,7 @@ class NewsHomeScreen extends StatefulWidget {
 class _NewsHomeScreenState extends State<NewsHomeScreen> {
   @override
   void initState() {
-    Provider.of<NewsProvider>(context,listen: false).getNewsFromApi();
+    Provider.of<NewsProvider>(context, listen: false).getNewsFromApi();
     super.initState();
   }
 
@@ -30,8 +30,8 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
           centerTitle: true,
           title: InkWell(
             onTap: () async {
-              await Provider.of<NewsProvider>(context, listen: false)
-                  .getNewsFromApi();
+              // await Provider.of<NewsProvider>(context, listen: false)
+              //     .getNewsFromApi();
             },
             child: const Padding(
               padding: EdgeInsets.all(16.0),
@@ -48,7 +48,7 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
               return Expanded(
                 child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: __.isLoading ? 20 : __.fetchedInfo.length,
+                    itemCount: __.isLoading ? 20 : __.fetchedNews.length,
                     itemBuilder: ((context, index) {
                       return __.isLoading
                           ? SizedBox(
@@ -75,7 +75,7 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
                             )
                           : InkWell(
                               onTap: () async {},
-                              child: NewsCard(news: __.fetchedInfo[index]));
+                              child: NewsCard(news: __.fetchedNews[index]));
                     })),
               );
             }))
@@ -87,7 +87,7 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
 }
 
 class NewsCard extends StatelessWidget {
-  final News news;
+  final NewsDataModel news;
   const NewsCard({
     Key? key,
     required this.news,

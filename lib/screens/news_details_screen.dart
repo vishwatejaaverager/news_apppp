@@ -1,9 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:news_apppp/database/data_model.dart';
 import 'package:news_apppp/models/news_model.dart';
 
 class NewsDetailedScreen extends StatefulWidget {
-  final News news;
+  final NewsDataModel news;
   const NewsDetailedScreen({super.key, required this.news});
 
   @override

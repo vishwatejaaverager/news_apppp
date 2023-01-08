@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/scheduler.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:news_apppp/database/data_model.dart';
 import 'package:news_apppp/models/news_model.dart';
 
 class NewsProvider with ChangeNotifier {
@@ -12,8 +14,11 @@ class NewsProvider with ChangeNotifier {
 
   bool _isLoading = true;
   bool get isLoading => _isLoading;
-  List<News> _fetchedInfo = [];
+  final List<News> _fetchedInfo = [];
   List<News> get fetchedInfo => _fetchedInfo;
+
+  List<NewsDataModel> _fetchedNews = [];
+  List<NewsDataModel> get fetchedNews => _fetchedNews;
 
   getNewsFromApi() async {
     _isLoading = true;
@@ -24,7 +29,19 @@ class NewsProvider with ChangeNotifier {
         var a = jsonDecode(newsInfo.body);
         List b = a['articles'];
 
-        _fetchedInfo = b.map((dynamic item) => News.fromMap(item)).toList();
+        // _fetchedInfo = b.map((dynamic item) => News.fromMap(item)).toList();
+        for (var element in b) {
+          News news = News.fromMap(element);
+          NewsDataModel newsDataModel = NewsDataModel(
+              title: news.title,
+              urlToImage: news.urlToImage,
+              description: news.description,
+              content: news.description,
+              source: news.source);
+          saveNewsinDb(newsDataModel);
+          _fetchedNews.add(newsDataModel);
+        }
+        getNewsFromDb();
         _isLoading = false;
         SchedulerBinding.instance.addPersistentFrameCallback((timeStamp) {
           notifyListeners();
@@ -33,5 +50,20 @@ class NewsProvider with ChangeNotifier {
         log(e.toString());
       }
     }
+  }
+
+  saveNewsinDb(NewsDataModel news) async {
+    Box<NewsDataModel> box = await Hive.openBox<NewsDataModel>('news');
+    box.add(news);
+  }
+
+  getNewsFromDb() async {
+    log("came to db");
+    Box<NewsDataModel> box = await Hive.openBox<NewsDataModel>('news');
+    _fetchedNews = box.values.toList();
+    log(_fetchedInfo.length.toString());
+    SchedulerBinding.instance.addPersistentFrameCallback((timeStamp) {
+      notifyListeners();
+    });
   }
 }
